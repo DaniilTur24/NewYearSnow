@@ -55,6 +55,7 @@ final class SnowController {
     var lastGust = 0.0
     var garlandDock: CGRect? = CGRect(x: -1, y: -1, width: 0, height: 0)   // для какого положения Дока построена гирлянда
     var cfg = Snap.now()
+    var maskExtras: () -> [CGRect] = { [] }      // наши окна (приветствие), где снег не нужен
     var onTick: ((Double, CGFloat) -> Void)?    // Санта и т. п.
     let myPID = getpid()
     lazy var flake = makeFlakeImage()
@@ -211,7 +212,7 @@ final class SnowController {
         }
         lastWins = wins
         windowFrames = wins.map { $0.frame }
-        updateSnowMask(windowFrames)
+        updateSnowMask(windowFrames + maskExtras())
 
         // Вкладки — сразу перед своим окном (то же место в порядке «спереди назад»).
         if cfg.tabSnow {
@@ -423,6 +424,7 @@ final class SnowController {
     func isEmptyDesktop(_ p: CGPoint) -> Bool {
         if windowFrames.contains(where: { $0.contains(p) }) { return false }
         if let d = dockFrame, d.insetBy(dx: -4, dy: -4).contains(p) { return false }
+        if maskExtras().contains(where: { $0.contains(p) }) { return false }
         guard let scr = NSScreen.screens.first(where: { $0.frame.contains(p) }) else { return false }
         let menuBar = scr.frame.maxY - scr.visibleFrame.maxY
         return p.y < scr.frame.maxY - menuBar

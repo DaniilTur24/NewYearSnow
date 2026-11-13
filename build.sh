@@ -11,7 +11,7 @@ for arch in arm64 x86_64; do
   echo "Сборка для $arch…"
   swiftc -O -swift-version 5 -target $arch-apple-macos14.0 Sources/*.swift \
     -o "$OBJ/NewYearSnow-$arch" \
-    -framework Cocoa -framework QuartzCore -framework AVFoundation
+    -framework Cocoa -framework QuartzCore -framework AVFoundation -framework SwiftUI -framework ServiceManagement
 done
 lipo -create "$OBJ"/NewYearSnow-* -output "$APP/Contents/MacOS/NewYearSnow"
 rm -rf "$OBJ"

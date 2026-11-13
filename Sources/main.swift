@@ -30,12 +30,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     lazy var fireworks = Fireworks(snow: snow)
     lazy var santa = Santa(snow: snow, fireworks: fireworks)
     var music: Music?            // аудио создаётся, только когда музыку включили
+    let welcome = WelcomeWindow()
     var statusItem: NSStatusItem!
     let menu = NSMenu()
     var clock: Timer?
     var lastClock = Date()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        snow.maskExtras = { [weak self] in self?.welcome.frame.map { [$0] } ?? [] }   // снег не падает на окно приветствия
         snow.onTick = { [weak self] now, dt in self?.santa.tick(now: now, dt: dt) }
         snow.enabled = !S.autoOff || inSeason()
         snow.start()
@@ -56,11 +58,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         clock = c
         clockTick()
 
-        // Один раз попросим доступ, нужный для сугроба на Доке и снега на вкладках.
-        let asked = "askedAccessibility"
-        if !AXIsProcessTrusted() && !UserDefaults.standard.bool(forKey: asked) {
-            UserDefaults.standard.set(true, forKey: asked)
-            askAccessibility()
+        // При первом запуске — окно «как настроить» (доступ к Доку, автозапуск).
+        let shown = "welcomeShown"
+        if !UserDefaults.standard.bool(forKey: shown) {
+            UserDefaults.standard.set(true, forKey: shown)
+            welcome.show()
         }
     }
 
@@ -131,6 +133,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if !AXIsProcessTrusted() {
             m.addItem(ActionItem("Разрешить снег на Доке и вкладках…") { [unowned self] in askAccessibility() })
         }
+        m.addItem(ActionItem("Как настроить…") { [unowned self] in welcome.show() })
         m.addItem(ActionItem("Выход", key: "q") { NSApp.terminate(nil) })
     }
 

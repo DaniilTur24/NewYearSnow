@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Новогодний снег для Mac</title>
+<meta name="description" content="Снег на рабочем столе, сугробы на окнах и Доке, гирлянды, салют, Санта и рождественская музыка. Бесплатно.">
+<meta property="og:title" content="❄️ Новогодний снег для Mac">
+<meta property="og:description" content="Снег, сугробы на окнах и Доке, гирлянды, салют, Санта и рождественская музыка. Бесплатно.">
+<meta property="og:image" content="https://daniiltur24.github.io/NewYearSnow/og.png">
+<meta property="og:url" content="https://daniiltur24.github.io/NewYearSnow/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="icon.png">
+<style>
+  :root {
+    --night: #071433;
+    --night2: #123a73;
+    --ink: #10213f;
+    --muted: #5b6b86;
+    --card: #ffffff;
+    --line: #e4ebf5;
+    --accent: #2f6fe0;
+    --accent2: #1f56b8;
+    --ok: #1f9d55;
+    --hl: #ff9f1c;
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    background: #f3f7fd;
+  }
+  a { color: var(--accent); }
+  button { font: inherit; }
+
+  /* ---------- шапка ---------- */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    background: linear-gradient(180deg, var(--night) 0%, var(--night2) 100%);
+    padding: 64px 16px 150px;
+    text-align: center;
+  }
+  #snow { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .garland { position: absolute; top: 0; left: 0; right: 0; height: 40px; display: flex; justify-content: space-around; pointer-events: none; }
+  .garland::before { content: ""; position: absolute; top: 6px; left: -2%; right: -2%; height: 14px;
+    border-bottom: 2px solid #0e2a1a; border-radius: 0 0 50% 50% / 0 0 100% 100%; }
+  .bulb { position: relative; top: 14px; width: 10px; height: 16px; border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+    background: var(--c); box-shadow: 0 0 12px 3px var(--c); animation: glow 2.4s ease-in-out infinite; animation-delay: var(--d); }
+  .bulb::before { content: ""; position: absolute; top: -4px; left: 2px; width: 6px; height: 5px; background: #1c3324; border-radius: 2px; }
+  @keyframes glow { 0%, 100% { opacity: 1 } 50% { opacity: .35; box-shadow: 0 0 2px 0 var(--c) } }
+  .hero-inner { position: relative; max-width: 760px; margin: 0 auto; }
+  .hero img { width: 128px; height: 128px; filter: drop-shadow(0 10px 30px rgba(0,0,0,.35)); }
+  .hero h1 { font-size: clamp(32px, 6vw, 54px); line-height: 1.1; margin: 18px 0 12px; letter-spacing: -.5px; }
+  .hero p.lead { font-size: clamp(17px, 2.4vw, 21px); color: rgba(255,255,255,.82); margin: 0 auto 30px; max-width: 600px; }
+  .download {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 16px 34px; border-radius: 999px; border: 0; cursor: pointer;
+    background: #fff; color: var(--night); font-size: 20px; font-weight: 700; text-decoration: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,.3), 0 0 0 6px rgba(255,255,255,.12);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .download:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(0,0,0,.35), 0 0 0 8px rgba(255,255,255,.16); }
+  .download svg { width: 22px; height: 22px; }
+  .meta { margin-top: 14px; font-size: 14px; color: rgba(255,255,255,.65); }
+  .drift { position: absolute; left: 0; bottom: -1px; width: 100%; height: 110px; display: block; }
+
+  /* ---------- не Mac ---------- */
+  .notmac { display: none; max-width: 520px; margin: 0 auto 26px; padding: 14px 18px; border-radius: 14px;
+    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25); font-size: 15px; }
+  .notmac button { margin-top: 10px; padding: 8px 16px; border-radius: 999px; border: 0; background: #fff; color: var(--night); font-weight: 600; cursor: pointer; }
+  body.is-mobile .notmac { display: block; }
+
+  /* ---------- секции ---------- */
+  main { max-width: 980px; margin: -40px auto 0; padding: 0 16px 60px; position: relative; }
+  section { margin-top: 56px; }
+  h2 { font-size: 28px; margin: 0 0 18px; text-align: center; }
+  .features { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  .feature { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+  .feature .e { font-size: 28px; }
+  .feature b { display: block; margin: 6px 0 4px; }
+  .feature span { color: var(--muted); font-size: 15px; }
+
+  .steps-inline { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; counter-reset: s; }
+  .steps-inline > div { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 18px 18px 60px; position: relative; }
+  .steps-inline > div::before { counter-increment: s; content: counter(s); position: absolute; left: 16px; top: 16px;
+    width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; display: grid; place-items: center; }
+  .center { text-align: center; }
+  .btn2 { display: inline-block; margin-top: 18px; padding: 11px 22px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent);
+    background: #fff; font-weight: 600; cursor: pointer; }
+
+  .help { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+  .help h3 { margin: 0 0 6px; }
+  .help p { margin: 6px 0 12px; color: var(--muted); }
+  .copybox { position: relative; background: #0f1d36; color: #dbe7ff; border-radius: 12px; padding: 14px 16px; padding-right: 120px;
+    font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; word-break: break-word; }
+  .copybox button { position: absolute; top: 10px; right: 10px; padding: 7px 14px; border-radius: 8px; border: 0;
+    background: #2f6fe0; color: #fff; font-weight: 600; cursor: pointer; font-family: -apple-system, sans-serif; }
+  details { border-top: 1px solid var(--line); padding: 12px 0; }
+  details summary { cursor: pointer; font-weight: 600; }
+  details p { color: var(--muted); }
+  footer { text-align: center; color: var(--muted); font-size: 14px; padding: 30px 16px 50px; }
+
+  /* ---------- окно-подсказка ---------- */
+  .modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; padding: 16px;
+    background: rgba(5, 14, 36, .55); backdrop-filter: blur(6px); z-index: 10; }
+  .modal.open { display: flex; }
+  .sheet { width: min(640px, 100%); max-height: 100%; overflow: auto; background: #fff; border-radius: 22px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.4); padding: 26px 26px 20px; position: relative; }
+  .sheet .x { position: absolute; top: 12px; right: 14px; border: 0; background: none; font-size: 26px; color: var(--muted); cursor: pointer; line-height: 1; }
+  .sheet .top { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; color: var(--ok); font-weight: 700; }
+  .sheet h3 { font-size: 22px; margin: 4px 0 6px; }
+  .sheet .lang { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+  .sheet .lang button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 3px 10px; margin-left: 4px; cursor: pointer; color: var(--muted); }
+  .sheet .lang button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .step { display: none; }
+  .step.on { display: block; animation: fade .25s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
+  .step p { margin: 0 0 14px; }
+  .nav { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; }
+  .dots { display: flex; gap: 6px; }
+  .dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+  .dots i.on { background: var(--accent); }
+  .nav button { padding: 10px 20px; border-radius: 999px; border: 0; cursor: pointer; font-weight: 600; }
+  .nav .back { background: #eef3fb; color: var(--ink); }
+  .nav .next { background: var(--accent); color: #fff; }
+  .nav button[disabled] { visibility: hidden; }
+
+  /* ---------- нарисованные окна macOS ---------- */
+  .scene { background: linear-gradient(180deg, #dfe9f8, #f4f8fe); border-radius: 14px; padding: 22px; display: grid; place-items: center; min-height: 230px; }
+  .win { background: #fff; border-radius: 12px; box-shadow: 0 12px 30px rgba(20, 40, 80, .2); width: min(440px, 100%); overflow: hidden; font-size: 14px; }
+  .win .bar { height: 30px; background: #eef1f6; display: flex; align-items: center; gap: 7px; padding: 0 11px; border-bottom: 1px solid #e1e6ee; }
+  .win .bar i { width: 11px; height: 11px; border-radius: 50%; background: #ff5f57; }
+  .win .bar i:nth-child(2) { background: #febc2e; } .win .bar i:nth-child(3) { background: #28c840; }
+  .win .bar span { margin-left: 8px; color: #6b7480; font-size: 12px; }
+  .dmg { display: flex; justify-content: space-around; align-items: center; padding: 26px 14px; position: relative; }
+  .dmg .ic { text-align: center; font-size: 12px; color: #333; }
+  .dmg .ic img, .dmg .folder { width: 64px; height: 64px; display: block; margin: 0 auto 6px; }
+  .folder { border-radius: 8px; background: linear-gradient(180deg, #7cc3ff, #3d97f0); position: relative; }
+  .folder::before { content: ""; position: absolute; top: -7px; left: 4px; width: 26px; height: 10px; background: #6ab8fb; border-radius: 4px 4px 0 0; }
+  .folder::after { content: "A"; position: absolute; inset: 0; display: grid; place-items: center; color: rgba(255,255,255,.85); font: 700 26px/1 -apple-system, sans-serif; }
+  .drag { position: absolute; left: 30%; right: 30%; top: 44%; border-top: 3px dashed var(--accent); }
+  .drag::after { content: ""; position: absolute; right: -4px; top: -9px; border: 7px solid transparent; border-left: 11px solid var(--accent); }
+  .ghost { position: absolute; left: 22%; top: 24%; width: 48px; height: 48px; opacity: .8; animation: drag 2.4s ease-in-out infinite; }
+  @keyframes drag { 0% { left: 22% } 60%, 100% { left: 64% } }
+  .alert { width: min(300px, 100%); background: #fff; border-radius: 14px; box-shadow: 0 12px 30px rgba(20, 40, 80, .25); padding: 20px 18px 16px; text-align: center; font-size: 13px; }
+  .alert img { width: 52px; height: 52px; }
+  .alert b { display: block; margin: 8px 0 6px; font-size: 14px; }
+  .alert p { color: #555; margin: 0 0 14px; font-size: 12px; }
+  .alert .b { display: block; padding: 7px; border-radius: 8px; background: #eceff3; margin-top: 7px; font-weight: 600; color: #333; }
+  .hl { position: relative; outline: 3px solid var(--hl); outline-offset: 2px; animation: pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse { 50% { outline-color: rgba(255, 159, 28, .25); } }
+  .settings { display: grid; grid-template-columns: 150px 1fr; min-height: 210px; }
+  .settings .side { background: #f3f5f8; border-right: 1px solid #e3e7ee; padding: 10px 8px; font-size: 12px; }
+  .settings .side div { padding: 5px 8px; border-radius: 6px; color: #444; }
+  .settings .side .sel { background: var(--accent); color: #fff; }
+  .settings .body { padding: 14px 16px; font-size: 12.5px; color: #333; }
+  .settings .body h4 { margin: 0 0 10px; font-size: 14px; }
+  .settings .row { background: #f6f8fb; border: 1px solid #e6eaf0; border-radius: 8px; padding: 10px 12px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+  .settings .btn { padding: 5px 10px; background: #fff; border: 1px solid #cfd6e0; border-radius: 6px; font-weight: 600; white-space: nowrap; }
+  .menubar { width: min(440px, 100%); background: rgba(255,255,255,.85); border-radius: 10px; box-shadow: 0 8px 22px rgba(20, 40, 80, .18);
+    display: flex; justify-content: flex-end; gap: 14px; padding: 7px 14px; font-size: 13px; color: #333; }
+  .menu { width: 240px; margin: 8px 0 0 auto; background: #fff; border-radius: 10px; box-shadow: 0 12px 26px rgba(20, 40, 80, .22); padding: 6px; font-size: 13px; }
+  .menu div { padding: 4px 10px; border-radius: 6px; } .menu hr { border: 0; border-top: 1px solid #eee; margin: 4px 0; }
+  .menu .g { color: #999; }
+
+  @media (max-width: 560px) {
+    .settings { grid-template-columns: 1fr; } .settings .side { display: none; }
+    .copybox { padding-right: 16px; padding-top: 50px; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <canvas id="snow"></canvas>
+  <div class="garland" id="garland"></div>
+  <div class="hero-inner">
+    <img src="icon.png" alt="">
+    <h1>Новогодний снег<br>для Mac</h1>
+    <p class="lead">Снег на рабочем столе, сугробы на окнах и Доке, гирлянды, салют, Санта с подарками и рождественская музыка.</p>
+    <div class="notmac">
+      📱 Эта программа для Mac. Откройте эту страницу на своём Mac-компьютере.
+      <br><button id="copyLink">Скопировать ссылку</button>
+    </div>
+    <a class="download" id="download" href="https://github.com/DaniilTur24/NewYearSnow/releases/latest/download/NewYearSnow.dmg">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M6 10l6 6 6-6M5 20h14"/></svg>
+      Скачать для Mac
+    </a>
+    <div class="meta">Бесплатно · macOS 14 и новее · Apple Silicon и Intel</div>
+  </div>
+  <svg class="drift" viewBox="0 0 1200 110" preserveAspectRatio="none"><path d="M0 60 C200 10 420 100 620 55 S1000 20 1200 60 V110 H0 Z" fill="#f3f7fd"/></svg>
+</header>
+
+<main>
+  <section>
+    <h2>Что умеет</h2>
+    <div class="features">
+      <div class="feature"><div class="e">🌨</div><b>Снег на рабочем столе</b><span>Падает на фоне и не мешает работать в окнах.</span></div>
+      <div class="feature"><div class="e">🏔</div><b>Сугробы на окнах и Доке</b><span>Сбивайте их курсором, а если резко дёрнуть окно, снег слетит.</span></div>
+      <div class="feature"><div class="e">🧊</div><b>Сосульки</b><span>Задели курсором, и сосулька падает со звоном.</span></div>
+      <div class="feature"><div class="e">💡</div><b>Гирлянды</b><span>Сверху экрана и на сугробе внизу, даже на Доке.</span></div>
+      <div class="feature"><div class="e">🌪</div><b>Три режима зимы</b><span>От лёгкого снежка до настоящей метели с ветром.</span></div>
+      <div class="feature"><div class="e">🎆</div><b>Салют</b><span>Двойной клик по столу, а в полночь 31 декабря большой салют.</span></div>
+      <div class="feature"><div class="e">🎅</div><b>Санта с подарками</b><span>Пролетает по экрану, а подарки можно ловить курсором.</span></div>
+      <div class="feature"><div class="e">🎵</div><b>Рождественская музыка</b><span>Пять мелодий в стиле музыкальной шкатулки.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Установка за 2 минуты</h2>
+    <div class="steps-inline">
+      <div><b>Скачайте</b> и перетащите снежинку в папку «<span data-t="apps"></span>».</div>
+      <div><b>Откройте</b> программу. macOS не пустит, это нормально: нажмите «<span data-t="done"></span>».</div>
+      <div><b><span data-t="settings"></span></b> → <span data-t="privacy"></span> → «<span data-t="openAnyway"></span>».</div>
+      <div><b>Готово!</b> Вверху справа появится ❄️, а программа сама подскажет остальное.</div>
+    </div>
+    <div class="center"><button class="btn2" id="showGuide">Показать по шагам с картинками</button></div>
+  </section>
+
+  <section>
+    <div class="help">
+      <h3>🤖 Не получается? Спросите ChatGPT</h3>
+      <p>Скопируйте текст, вставьте в ChatGPT (или любой ИИ-чат) и допишите, что именно не получается.</p>
+      <div class="copybox" id="prompt"><button data-copy="prompt">Копировать</button>Помоги мне установить бесплатную программу NewYearSnow на Mac (страница: https://github.com/DaniilTur24/NewYearSnow). Я скачал файл NewYearSnow.dmg. Объясни по шагам и простыми словами:
+1) как перетащить программу в папку «Программы»;
+2) как открыть её, если macOS пишет, что не может проверить программу (Системные настройки → Конфиденциальность и безопасность → «Всё равно открыть»);
+3) как выдать ей разрешение «Универсальный доступ», чтобы снег был на Доке.
+Я не программист. Моя версия macOS: (посмотреть: меню Apple → Об этом Mac).
+Вот что у меня не получается: </div>
+
+      <details>
+        <summary>Нет кнопки «<span data-t="openAnyway"></span>»</summary>
+        <p>Сначала попробуйте открыть программу двойным щелчком: кнопка появляется только после такой попытки, примерно на час. Если её всё равно нет, откройте Терминал (Программы → Утилиты → Терминал), вставьте команду и нажмите Enter. После этого программа откроется обычным двойным щелчком.</p>
+        <div class="copybox" id="cmd"><button data-copy="cmd">Копировать</button>xattr -dr com.apple.quarantine /Applications/NewYearSnow.app</div>
+      </details>
+      <details>
+        <summary>Не видно ❄️ в строке меню</summary>
+        <p>На MacBook с «чёлкой» лишние значки прячутся за вырезом экрана. Зажмите ⌘ Cmd и перетащите пару других значков из строки меню вниз, чтобы освободить место.</p>
+      </details>
+      <details>
+        <summary>Это безопасно?</summary>
+        <p>Весь код открыт на <a href="https://github.com/DaniilTur24/NewYearSnow">GitHub</a>. Программа не ходит в интернет и не собирает данные. Предупреждение macOS появляется только потому, что программа бесплатная и не подписана платным сертификатом Apple.</p>
+      </details>
+      <details>
+        <summary>Как удалить</summary>
+        <p>Меню ❄️ → «Выход», затем перетащите NewYearSnow из «Программ» в корзину.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Бесплатно и с открытым кодом · <a href="https://github.com/DaniilTur24/NewYearSnow">GitHub</a> · MIT
+</footer>
+
+<!-- ---------- пошаговая подсказка ---------- -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
+  <div class="sheet">
+    <button class="x" id="close" aria-label="Закрыть">×</button>
+    <div class="top" id="dlNote">✓ Скачивание началось</div>
+    <h3 id="guideTitle">Осталось несколько шагов</h3>
+    <div class="lang">Язык вашей macOS:
+      <button data-lang="ru">Русский</button><button data-lang="en">English</button><button data-lang="de">Deutsch</button>
+    </div>
+
+    <div class="step" data-step="0">
+      <p><b>1. Откройте скачанный файл</b> <code>NewYearSnow.dmg</code> (он в папке «<span data-t="downloads"></span>» или внизу Дока) и <b>перетащите снежинку на папку «<span data-t="apps"></span>»</b>.</p>
+      <div class="scene">
+        <div class="win">
+          <div class="bar"><i></i><i></i><i></i><span>Новогодний снег</span></div>
+          <div class="dmg">
+            <div class="ic"><img src="icon.png" alt="">NewYearSnow</div>
+            <div class="drag"></div>
+            <img class="ghost" src="icon.png" alt="">
+            <div class="ic"><div class="folder"></div><span data-t="apps"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="1">
+      <p><b>2. Откройте NewYearSnow</b> в папке «<span data-t="apps"></span>». macOS покажет такое окно: это нормально для бесплатных программ. <b>Нажмите «<span data-t="done"></span>»</b>.</p>
+      <div class="scene">
+        <div class="alert">
+          <img src="icon.png" alt="">
+          <b data-t="notOpened"></b>
+          <p data-t="notOpenedText"></p>
+          <span class="b hl" data-t="done"></span>
+          <span class="b" data-t="trash"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="2">
+      <p><b>3. Откройте «<span data-t="settings"></span>» → «<span data-t="privacy"></span>»</b>, прокрутите вниз и <b>нажмите «<span data-t="openAnyway"></span>»</b>. Подтвердите паролем или Touch ID и ещё раз нажмите «<span data-t="openAnyway"></span>».</p>
+      <div class="scene">
+        <div class="win">
+          <div class="bar"><i></i><i></i><i></i><span data-t="privacy"></span></div>
+          <div class="settings">
+            <div class="side"><div>Wi‑Fi</div><div>Bluetooth</div><div data-t="general"></div><div class="sel" data-t="privacy"></div><div data-t="desktop"></div></div>
+            <div class="body">
+              <h4 data-t="security"></h4>
+              <div class="row"><span data-t="blocked"></span><span class="btn hl" data-t="openAnyway"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="3">
+      <p><b>4. Готово!</b> Вверху справа появится ❄️, и пойдёт снег. Программа сама откроет окно, где одной кнопкой можно включить <b>снег на Доке</b> и <b>автозапуск</b>.</p>
+      <div class="scene" style="display:block">
+        <div class="menubar"><span>🔋</span><span>📶</span><b>❄️ 49 д</b><span>12:00</span></div>
+        <div class="menu">
+          <div class="g">Режим зимы</div><div>Лёгкий</div><div>✓ Средний</div><div>Максимальный</div><hr>
+          <div>Позвать Санту 🎅</div><div>Запустить салют 🎆</div><div>Музыка 🎵</div><hr><div>Как настроить…</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button class="back" id="back">← Назад</button>
+      <div class="dots" id="dots"><i></i><i></i><i></i><i></i></div>
+      <button class="next" id="next">Далее →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Названия кнопок и разделов macOS на разных языках
+const T = {
+  ru: { apps: "Программы", downloads: "Загрузки", done: "Готово", trash: "Переместить в Корзину",
+        notOpened: "Программа «NewYearSnow» не открыта",
+        notOpenedText: "Apple не удалось подтвердить, что программа «NewYearSnow» не содержит вредоносного ПО…",
+        settings: "Системные настройки", privacy: "Конфиденциальность и безопасность", general: "Основные", desktop: "Рабочий стол и Dock",
+        security: "Безопасность", blocked: "Программа «NewYearSnow» заблокирована для защиты Mac.", openAnyway: "Всё равно открыть" },
+  en: { apps: "Applications", downloads: "Downloads", done: "Done", trash: "Move to Trash",
+        notOpened: "“NewYearSnow” Not Opened",
+        notOpenedText: "Apple could not verify “NewYearSnow” is free of malware that may harm your Mac…",
+        settings: "System Settings", privacy: "Privacy & Security", general: "General", desktop: "Desktop & Dock",
+        security: "Security", blocked: "“NewYearSnow” was blocked to protect your Mac.", openAnyway: "Open Anyway" },
+  de: { apps: "Programme", downloads: "Downloads", done: "Fertig", trash: "In den Papierkorb legen",
+        notOpened: "„NewYearSnow“ wurde nicht geöffnet",
+        notOpenedText: "Apple konnte nicht überprüfen, ob „NewYearSnow“ frei von Schadsoftware ist…",
+        settings: "Systemeinstellungen", privacy: "Datenschutz & Sicherheit", general: "Allgemein", desktop: "Schreibtisch & Dock",
+        security: "Sicherheit", blocked: "„NewYearSnow“ wurde blockiert, um deinen Mac zu schützen.", openAnyway: "Dennoch öffnen" },
+};
+let lang = (() => {
+  try { const s = localStorage.getItem("macLang"); if (T[s]) return s; } catch (e) {}
+  const l = (navigator.language || "ru").slice(0, 2);
+  return l === "de" ? "de" : l === "en" ? "en" : "ru";
+})();
+function applyLang() {
+  document.querySelectorAll("[data-t]").forEach(el => { el.textContent = T[lang][el.dataset.t]; });
+  document.querySelectorAll("[data-lang]").forEach(b => b.classList.toggle("on", b.dataset.lang === lang));
+}
+document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => {
+  lang = b.dataset.lang; try { localStorage.setItem("macLang", lang); } catch (e) {} applyLang();
+}));
+applyLang();
+
+// Телефон / планшет: подсказать открыть на Mac
+const isMobile = /iPhone|iPad|Android|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
+if (isMobile) document.body.classList.add("is-mobile");
+document.getElementById("copyLink").addEventListener("click", e => copy(location.href, e.target, "Ссылка скопирована ✓"));
+
+// Пошаговая подсказка
+const modal = document.getElementById("modal");
+const steps = [...document.querySelectorAll(".step")];
+const dots = [...document.querySelectorAll("#dots i")];
+let cur = 0;
+function show(i) {
+  cur = Math.max(0, Math.min(steps.length - 1, i));
+  steps.forEach((s, k) => s.classList.toggle("on", k === cur));
+  dots.forEach((d, k) => d.classList.toggle("on", k === cur));
+  document.getElementById("back").disabled = cur === 0;
+  document.getElementById("next").textContent = cur === steps.length - 1 ? "Понятно ✓" : "Далее →";
+}
+function open(downloaded) {
+  document.getElementById("dlNote").style.display = downloaded ? "flex" : "none";
+  document.getElementById("guideTitle").textContent = downloaded ? "Осталось несколько шагов" : "Как установить";
+  show(0); modal.classList.add("open");
+}
+function close() { modal.classList.remove("open"); }
+document.getElementById("download").addEventListener("click", () => setTimeout(() => open(true), 300));
+document.getElementById("showGuide").addEventListener("click", () => open(false));
+document.getElementById("close").addEventListener("click", close);
+modal.addEventListener("click", e => { if (e.target === modal) close(); });
+document.addEventListener("keydown", e => {
+  if (!modal.classList.contains("open")) return;
+  if (e.key === "Escape") close();
+  if (e.key === "ArrowRight") show(cur + 1);
+  if (e.key === "ArrowLeft") show(cur - 1);
+});
+document.getElementById("back").addEventListener("click", () => show(cur - 1));
+document.getElementById("next").addEventListener("click", () => cur === steps.length - 1 ? close() : show(cur + 1));
+
+// Копирование
+function copy(text, btn, done = "Скопировано ✓") {
+  const old = btn.textContent;
+  const ok = () => { btn.textContent = done; setTimeout(() => btn.textContent = old, 1800); };
+  if (navigator.clipboard) navigator.clipboard.writeText(text).then(ok, () => fallback(text, ok)); else fallback(text, ok);
+}
+function fallback(text, ok) {
+  const t = document.createElement("textarea"); t.value = text; document.body.appendChild(t); t.select();
+  try { document.execCommand("copy"); ok(); } catch (e) {} t.remove();
+}
+document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => {
+  const box = document.getElementById(b.dataset.copy);
+  const text = [...box.childNodes].filter(n => n !== b).map(n => n.textContent).join("").trim();
+  copy(text, b);
+}));
+
+// Гирлянда
+const g = document.getElementById("garland");
+const colors = ["#ff3b47", "#ffc93c", "#34e06a", "#4d9bff", "#ff6ad5", "#ff8a1f"];
+const n = Math.max(8, Math.floor(innerWidth / 46));
+for (let i = 0; i < n; i++) {
+  const b = document.createElement("span"); b.className = "bulb";
+  b.style.setProperty("--c", colors[i % colors.length]); b.style.setProperty("--d", (i * 0.37 % 2.4) + "s");
+  b.style.transform = `rotate(${(i % 2 ? 1 : -1) * 8}deg)`; g.appendChild(b);
+}
+
+// Снег
+const cv = document.getElementById("snow"), cx = cv.getContext("2d");
+let flakes = [], W = 0, H = 0;
+function resize() {
+  const r = devicePixelRatio || 1; W = cv.clientWidth; H = cv.clientHeight;
+  cv.width = W * r; cv.height = H * r; cx.setTransform(r, 0, 0, r, 0, 0);
+  flakes = Array.from({ length: Math.floor(W * H / 6000) }, () => ({
+    x: Math.random() * W, y: Math.random() * H, r: 0.8 + Math.random() * 2.4, v: 0.3 + Math.random() * 0.9, p: Math.random() * 6
+  }));
+}
+function tick(t) {
+  cx.clearRect(0, 0, W, H); cx.fillStyle = "rgba(255,255,255,.85)";
+  for (const f of flakes) {
+    f.y += f.v; f.x += Math.sin(t / 1400 + f.p) * 0.35;
+    if (f.y > H + 4) { f.y = -4; f.x = Math.random() * W; }
+    cx.beginPath(); cx.arc(f.x, f.y, f.r, 0, 7); cx.fill();
+  }
+  requestAnimationFrame(tick);
+}
+addEventListener("resize", resize); resize();
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches) requestAnimationFrame(tick);
+</script>
+</body>
+</html>
