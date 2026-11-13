@@ -100,9 +100,6 @@
     font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; word-break: break-word; }
   .copybox button { position: absolute; top: 10px; right: 10px; padding: 7px 14px; border-radius: 8px; border: 0;
     background: #2f6fe0; color: #fff; font-weight: 600; cursor: pointer; font-family: -apple-system, sans-serif; }
-  details { border-top: 1px solid var(--line); padding: 12px 0; }
-  details summary { cursor: pointer; font-weight: 600; }
-  details p { color: var(--muted); }
   footer { text-align: center; color: var(--muted); font-size: 14px; padding: 30px 16px 50px; }
 
   /* ---------- окно-подсказка ---------- */
@@ -114,9 +111,9 @@
   .sheet .x { position: absolute; top: 12px; right: 14px; border: 0; background: none; font-size: 26px; color: var(--muted); cursor: pointer; line-height: 1; }
   .sheet .top { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; color: var(--ok); font-weight: 700; }
   .sheet h3 { font-size: 22px; margin: 4px 0 6px; }
-  .sheet .lang { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
-  .sheet .lang button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 3px 10px; margin-left: 4px; cursor: pointer; color: var(--muted); }
-  .sheet .lang button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .lang { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+  .lang button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 3px 10px; margin-left: 4px; cursor: pointer; color: var(--muted); }
+  .lang button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
   .step { display: none; }
   .step.on { display: block; animation: fade .25s ease; }
   @keyframes fade { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
@@ -214,6 +211,7 @@
 
   <section>
     <h2>Установка за 2 минуты</h2>
+    <div class="lang center">Названия кнопок, как на вашем Mac — язык macOS: <button data-lang="en">English</button><button data-lang="ru">Русский</button><button data-lang="de">Deutsch</button></div>
     <div class="steps-inline">
       <div><b>Скачайте</b> и перетащите снежинку в папку «<span data-t="apps"></span>».</div>
       <div><b>Откройте</b> программу. macOS не пустит, это нормально: нажмите «<span data-t="done"></span>».</div>
@@ -234,23 +232,6 @@
 Я не программист. Моя версия macOS: (посмотреть: меню Apple → Об этом Mac).
 Вот что у меня не получается: </div>
 
-      <details>
-        <summary>Нет кнопки «<span data-t="openAnyway"></span>»</summary>
-        <p>Сначала попробуйте открыть программу двойным щелчком: кнопка появляется только после такой попытки, примерно на час. Если её всё равно нет, откройте Терминал (Программы → Утилиты → Терминал), вставьте команду и нажмите Enter. После этого программа откроется обычным двойным щелчком.</p>
-        <div class="copybox" id="cmd"><button data-copy="cmd">Копировать</button>xattr -dr com.apple.quarantine /Applications/NewYearSnow.app</div>
-      </details>
-      <details>
-        <summary>Не видно ❄️ в строке меню</summary>
-        <p>На MacBook с «чёлкой» лишние значки прячутся за вырезом экрана. Зажмите ⌘ Cmd и перетащите пару других значков из строки меню вниз, чтобы освободить место.</p>
-      </details>
-      <details>
-        <summary>Это безопасно?</summary>
-        <p>Весь код открыт на <a href="https://github.com/DaniilTur24/NewYearSnow">GitHub</a>. Программа не ходит в интернет и не собирает данные. Предупреждение macOS появляется только потому, что программа бесплатная и не подписана платным сертификатом Apple.</p>
-      </details>
-      <details>
-        <summary>Как удалить</summary>
-        <p>Меню ❄️ → «Выход», затем перетащите NewYearSnow из «Программ» в корзину.</p>
-      </details>
     </div>
   </section>
 </main>
@@ -266,7 +247,7 @@
     <div class="top" id="dlNote">✓ Скачивание началось</div>
     <h3 id="guideTitle">Осталось несколько шагов</h3>
     <div class="lang">Язык вашей macOS:
-      <button data-lang="ru">Русский</button><button data-lang="en">English</button><button data-lang="de">Deutsch</button>
+      <button data-lang="en">English</button><button data-lang="ru">Русский</button><button data-lang="de">Deutsch</button>
     </div>
 
     <div class="step" data-step="0">
@@ -351,10 +332,13 @@ const T = {
         settings: "Systemeinstellungen", privacy: "Datenschutz & Sicherheit", general: "Allgemein", desktop: "Schreibtisch & Dock",
         security: "Sicherheit", blocked: "„NewYearSnow“ wurde blockiert, um deinen Mac zu schützen.", openAnyway: "Dennoch öffnen" },
 };
+// Сайт на русском, а названия кнопок macOS — как на компьютере у человека:
+// по умолчанию английские, по выбору русские или немецкие (выбор запоминается).
 let lang = (() => {
+  const q = new URLSearchParams(location.search).get("mac");
+  if (T[q]) return q;
   try { const s = localStorage.getItem("macLang"); if (T[s]) return s; } catch (e) {}
-  const l = (navigator.language || "ru").slice(0, 2);
-  return l === "de" ? "de" : l === "en" ? "en" : "ru";
+  return "en";
 })();
 function applyLang() {
   document.querySelectorAll("[data-t]").forEach(el => { el.textContent = T[lang][el.dataset.t]; });
