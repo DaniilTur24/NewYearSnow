@@ -43,6 +43,7 @@ final class SnowController {
     var lastTick = CACurrentMediaTime()
     var lastPoll = 0.0
     var lastDockPoll = 0.0
+    var dockBurstUntil = 0.0      // после изменений Дока какое-то время опрашиваем его чаще
     var lastGarland = 0.0
     var growAcc: CGFloat = 0
     var dirty = true
@@ -62,7 +63,21 @@ final class SnowController {
 
     static let ignoredOwners: Set<String> = ["Window Server", "Dock", "Control Center", "Notification Center", "SystemUIServer"]
 
+    /// Док поменялся (значки, размер, запуск или закрытие программы) — сугроб подстраивается сразу, не через секунду.
+    func watchDock() {
+        let bump: @Sendable (Notification) -> Void = { [weak self] _ in
+            MainActor.assumeIsolated { self?.dockBurstUntil = CACurrentMediaTime() + 2 }
+        }
+        DistributedNotificationCenter.default().addObserver(forName: Notification.Name("com.apple.dock.prefchanged"), object: nil, queue: .main, using: bump)
+        let ws = NSWorkspace.shared.notificationCenter
+        for n in [NSWorkspace.didLaunchApplicationNotification, NSWorkspace.didTerminateApplicationNotification,
+                  NSWorkspace.activeSpaceDidChangeNotification] {
+            ws.addObserver(forName: n, object: nil, queue: .main, using: bump)
+        }
+    }
+
     func start() {
+        watchDock()
         buildOverlays()
         NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification,
                                                object: nil, queue: .main) { [weak self] _ in
@@ -235,7 +250,7 @@ final class SnowController {
         }
 
         // Док — поверх всех окон, поэтому идёт первым.
-        if now - lastDockPoll >= 1 { pollDock(primaryH: primaryH); lastDockPoll = now; updateGarlandGaps() }
+        if now - lastDockPoll >= (now < dockBurstUntil ? 0.15 : 1) { pollDock(primaryH: primaryH); lastDockPoll = now; updateGarlandGaps() }
         if let df = dockFrame { wins.insert(WinEntry(id: dockPileID, frame: df, kind: .dock, pid: 0), at: 0) }
 
         // Сугроб по нижнему краю экрана — позади всего.
@@ -790,32 +805,38 @@ final class SnowController {
 /// Файл в ~/Library/Application Support/NewYearSnow — переживает обновления приложения,
 /// поэтому сугроб на Доке есть сразу, даже пока «Универсальный доступ» ещё не выдан заново.
 enum DockCache {
-    static var memo: CGRect??
+    static var memo: [Double]?     // последняя запись: рамка Дока (4 числа) + «отпечаток» его состояния
     static var url: URL {
         FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent("Library/Application Support/NewYearSnow/dock.plist")
     }
 
+    /// «Отпечаток» Дока без особых разрешений: размер значков, ширина экрана, толщина Дока и число значков.
+    /// Изменился хоть один пункт — запомненная рамка уже неверна, и по ней снег рисовать нельзя.
+    static func stamp() -> [Double] {
+        let dock = UserDefaults(suiteName: "com.apple.dock")
+        let tile = Double(dock?.integer(forKey: "tilesize") ?? 0)
+        let items = ["persistent-apps", "persistent-others", "recent-apps"].reduce(0) { $0 + ((dock?.array(forKey: $1))?.count ?? 0) }
+        let running = NSWorkspace.shared.runningApplications.filter { $0.activationPolicy == .regular }.count
+        let s = NSScreen.screens.first
+        return [tile, Double(s?.frame.width ?? 0), Double(s?.visibleFrame.minY ?? 0), Double(items), Double(running)]
+    }
+
     static func save(_ f: CGRect) {
-        if let m = memo, let old = m, abs(old.minX - f.minX) < 0.5, abs(old.width - f.width) < 0.5,
-           abs(old.minY - f.minY) < 0.5, abs(old.height - f.height) < 0.5 { return }
-        memo = .some(f)
+        let rec = [f.minX, f.minY, f.width, f.height].map { Double($0) } + stamp()
+        if let m = memo, m.count == rec.count, zip(m, rec).allSatisfy({ abs($0 - $1) < 0.5 }) { return }
+        memo = rec
         try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-        (([f.minX, f.minY, f.width, f.height].map { Double($0) }) as NSArray).write(to: url, atomically: true)
+        (rec as NSArray).write(to: url, atomically: true)
     }
 
+    /// Запомненная рамка — только если Док с тех пор не менялся. Иначе nil: лучше без снега, чем кривой.
     static func load() -> CGRect? {
-        if let m = memo { return valid(m) }
-        let a = NSArray(contentsOf: url) as? [Double]
-        let f = a.flatMap { $0.count == 4 ? CGRect(x: $0[0], y: $0[1], width: $0[2], height: $0[3]) : nil }
-        memo = .some(f)
-        return valid(f)
-    }
-
-    /// Док действительно виден внизу экрана (не скрыт автоматически и не сбоку).
-    static func valid(_ f: CGRect?) -> CGRect? {
-        guard let f, let s = NSScreen.screens.first, s.visibleFrame.minY - s.frame.minY > 10 else { return nil }
-        return f
+        if memo == nil { memo = (NSArray(contentsOf: url) as? [Double]) ?? [] }
+        guard let m = memo, m.count == 4 + stamp().count else { return nil }
+        guard Array(m[4...]) == stamp() else { return nil }
+        guard let s = NSScreen.screens.first, s.visibleFrame.minY - s.frame.minY > 10 else { return nil }   // Док не скрыт и не сбоку
+        return CGRect(x: m[0], y: m[1], width: m[2], height: m[3])
     }
 }
 

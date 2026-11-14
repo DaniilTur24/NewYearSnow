@@ -58,10 +58,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         clock = c
         clockTick()
 
-        // При первом запуске — окно «как настроить» (доступ к Доку, автозапуск).
-        let shown = "welcomeShown"
-        if !UserDefaults.standard.bool(forKey: shown) {
-            UserDefaults.standard.set(true, forKey: shown)
+        // Окно «как настроить» (доступ к Доку, автозапуск): при первом запуске, а также после обновления
+        // или пересборки программы, если macOS сбросила «Универсальный доступ» — иначе снег на Доке пропадёт молча.
+        let build = (try? FileManager.default.attributesOfItem(atPath: Bundle.main.executablePath ?? "")[.modificationDate] as? Date)
+            .flatMap { $0 }.map { String(Int($0.timeIntervalSince1970)) } ?? "0"
+        let ud = UserDefaults.standard
+        if !ud.bool(forKey: "welcomeShown") || (!AXIsProcessTrusted() && ud.string(forKey: "welcomeBuild") != build) {
+            ud.set(true, forKey: "welcomeShown")
+            ud.set(build, forKey: "welcomeBuild")
             welcome.show()
         }
     }
